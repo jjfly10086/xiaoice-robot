@@ -79,7 +79,12 @@ def get_message(msg):
 if __name__ == '__main__':
     itchat.auto_login(hotReload=True)
     mps = itchat.search_mps(name='小冰')
-    print(mps[0]['UserName'])
-    XIAO_ICE_USER_NAME = mps[0]['UserName']
-    itchat.run()
+    mps_size = len(mps)
+    if mps_size == 0:
+        print('search_mps(\'小冰\') resp is null')
+        itchat.logout()
+    else:
+        print(mps[0]['UserName'])
+        XIAO_ICE_USER_NAME = mps[0]['UserName']
+        itchat.run()
    
