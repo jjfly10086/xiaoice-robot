@@ -8,7 +8,7 @@ XIAO_ICE_USER_NAME = ''
 # 消息发送者队列
 my_queue = Queue()
 # 最后一个队列用户，默认我自己
-last_to_user_name = '***********************'
+last_to_user_name = ''
 
 
 # 监听个人文字消息
@@ -48,12 +48,12 @@ def get_message(msg):
     print('receive 公众号消息 from [%s], msgType: [%s], message: [%s]' % (msg.fromUserName, msg.type, msg.text))
     if msg.fromUserName == XIAO_ICE_USER_NAME:
         if my_queue.empty():
-            toUserName = last_to_user_name
+            to_user_name = last_to_user_name
             print('queue is empty, use last userName: [%s]' % last_to_user_name)
         else:
-            toUserName = my_queue.get()
-        print('to send userName %s' % toUserName)
-        itchat.send(msg.text, toUserName=toUserName)
+            to_user_name = my_queue.get()
+        print('to send userName %s' % to_user_name)
+        itchat.send(msg.text, toUserName=to_user_name)
 
 
 # 监听公众号媒体消息
@@ -64,16 +64,16 @@ def get_message(msg):
     msg.download(msg.fileName)
     if msg.fromUserName == XIAO_ICE_USER_NAME:
         if my_queue.empty():
-            toUserName = last_to_user_name
+            to_user_name = last_to_user_name
             print('queue is empty, use last userName: [%s]' % last_to_user_name)
         else:
-            toUserName = my_queue.get()
-        print('to send userName %s' % toUserName)
+            to_user_name = my_queue.get()
+        print('to send userName %s' % to_user_name)
         type_symbol = {
             PICTURE: 'img',
             VIDEO: 'vid', }.get(msg.type, 'fil')
         to_msg = '@%s@%s' % (type_symbol, msg.fileName)
-        itchat.send(to_msg, toUserName=toUserName)
+        itchat.send(to_msg, toUserName=to_user_name)
 
 
 if __name__ == '__main__':
@@ -86,5 +86,8 @@ if __name__ == '__main__':
     else:
         print(mps[0]['UserName'])
         XIAO_ICE_USER_NAME = mps[0]['UserName']
+        # 获取自己的用户信息，返回自己的属性字典
+        my_own = itchat.search_friends()
+        print(my_own['UserName'])
+        last_to_user_name = my_own['UserName']
         itchat.run()
-   
